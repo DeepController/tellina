@@ -25,6 +25,7 @@ urlpatterns = [
 
     url(r'^remember_ip_address$', views.remember_ip_address),
     url(r'^vote', views.vote),
+    url(r'^check_vote', views.check_vote),
 
     url(r'^login', annotator.login),
     url(r'^uri_panel', annotator.url_panel),

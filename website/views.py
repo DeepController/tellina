@@ -15,7 +15,7 @@ from bashlex import data_tools
 
 from website.models import NL, Command, NLRequest, Translation, Vote, User
 
-WEBSITE_DEVELOP = True
+WEBSITE_DEVELOP = False
 CACHE_TRANSLATIONS = False
 
 from website import functions
@@ -150,42 +150,75 @@ def vote(request, ip_address):
 
     translation = Translation.objects.get(id=id)
 
+    vote_query = Vote.objects.filter(translation=translation, ip_address=ip_address)
     # store voting record in the DB
-    if Vote.objects.filter(translation=translation, ip_address=ip_address)\
-        .exists():
-        vote = Vote.objects.get(translation=translation, ip_address=ip_address)
-        if upvoted == 'true' and not vote.upvoted:
-            translation.num_upvotes += 1
-        if downvoted == 'true' and not vote.downvoted:
-            translation.num_downvotes += 1
-        if starred == 'true' and not vote.starred:
-            translation.num_stars += 1
-        if upvoted == 'false' and vote.upvoted:
-            translation.num_upvotes -= 1
-        if downvoted == 'false' and vote.downvoted:
-            translation.num_downvotes -= 1
-        if starred == 'false' and vote.starred:
-            translation.num_stars -= 1
-        vote.upvoted = (upvoted == 'true')
-        vote.downvoted = (downvoted == 'true')
-        vote.starred = (starred == 'true')
-        vote.save()
+    if upvoted == 'true' or downvoted == 'true' or starred == 'true':
+        if vote_query.exists():
+            vote = Vote.objects.get(translation=translation, ip_address=ip_address)
+            if upvoted == 'true' and not vote.upvoted:
+                translation.num_upvotes += 1
+            if downvoted == 'true' and not vote.downvoted:
+                translation.num_downvotes += 1
+            if starred == 'true' and not vote.starred:
+                translation.num_stars += 1
+            if upvoted == 'false' and vote.upvoted:
+                translation.num_upvotes -= 1
+            if downvoted == 'false' and vote.downvoted:
+                translation.num_downvotes -= 1
+            if starred == 'false' and vote.starred:
+                translation.num_stars -= 1
+            vote.upvoted = (upvoted == 'true')
+            vote.downvoted = (downvoted == 'true')
+            vote.starred = (starred == 'true')
+            vote.save()
+        else:
+            Vote.objects.create(
+                translation=translation, ip_address=ip_address,
+                upvoted=(upvoted == 'true'),
+                downvoted=(downvoted == 'true'),
+                starred=(starred == 'true')
+            )
+            if upvoted == 'true':
+                translation.num_upvotes += 1
+            if downvoted == 'true':
+                translation.num_downvotes += 1
+            if starred == 'true':
+                translation.num_stars += 1
     else:
-        Vote.objects.create(
-            translation=translation, ip_address=ip_address,
-            upvoted=(upvoted == 'true'),
-            downvoted=(downvoted == 'true'),
-            starred=(starred == 'true')
-        )
-        if upvoted == 'true':
-            translation.num_upvotes += 1
-        if downvoted == 'true':
-            translation.num_downvotes += 1
-        if starred == 'true':
-            translation.num_stars += 1
+        if vote_query.exists():
+            vote = Vote.objects.get(translation=translation, ip_address=ip_address)
+            if vote.upvoted == 'true':
+                translation.num_upvotes -= 1
+            if vote.downvoted == 'true':
+                translation.num_downvotes -= 1
+            if vote.starred == 'true':
+                translation.num_stars -= 1
+            vote.delete();
+
     translation.save()
 
     return HttpResponse()
+
+@ip_address_required
+def check_vote(request, ip_address):
+    id = request.GET['id']
+
+    translation = Translation.objects.get(id=id)
+
+    vote_query = Vote.objects.filter(translation=translation, ip_address=ip_address)
+
+    if vote_query.exists():
+        vote = Vote.objects.get(translation=translation, ip_address=ip_address)
+        if vote.upvoted == True:
+            return HttpResponse("up")
+        if vote.downvoted == True:
+            return HttpResponse("down")
+        if vote.starred == True:
+            return HttpResponse("star")
+        return HttpResponse("error")
+    else:
+        return HttpResponse("false")
+
 
 def remember_ip_address(request):
     ip_address = request.GET['ip_address']
@@ -221,10 +254,12 @@ def latest_requests_with_translations():
             for top_translation in Translation.objects.filter(
                     request_str=request.request_str, score=max_score):
                 break
+            top_translation_id = top_translation.id
             top_translation = top_translation.pred_cmd.str
         else:
             top_translation = 'No translation available.'
-        latest_requests_with_translations.append((request, top_translation))
+            top_translation_id = 0
+        latest_requests_with_translations.append((request, top_translation_id, top_translation))
         max_num_translation += 1
         if max_num_translation % 20 == 0:
             break

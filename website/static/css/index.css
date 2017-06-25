@@ -87,3 +87,7 @@ html, body {
     margin-left: 70px;
     color: rgb(108, 108, 108);
 }
+
+.selected_button {
+    color: red;
+}

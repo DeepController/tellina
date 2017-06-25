@@ -38,8 +38,8 @@
                 </div>
                 {% if latest_request_list %}
                     <div class="recent-post-panel col-sm-6 col-xs-12">
-                        {% for request, top_ranked_cmd in latest_request_list %}
-                            <div class="row">
+                        {% for request, id, top_ranked_cmd in latest_request_list %}
+                            <div class="row translation id_{{id}}">
                                 <div class="[ panel panel-default ] panel-google-plus">
                                     <!-- <div class="dropdown">
                                         <span class="dropdown-toggle" type="button" data-toggle="dropdown">
@@ -80,8 +80,12 @@
                                         <button type="button" class="[ btn btn-default copy-current-command ]">
                                             <span class="[ glyphicon glyphicon-copy ]"></span>
                                         </button>
-                                        <button type="button" class="[ btn btn-default ]">-1</button>
-                                        <button type="button" class="[ btn btn-default ]">+1</button>
+                                        <button type="button" class="[ btn btn-default downvote ]">
+                                            <span class="[ glyphicon glyphicon-thumbs-down ]"></span>
+                                        </button>
+                                        <button type="button" class="[ btn btn-default upvote ]">
+                                            <span class="[ glyphicon glyphicon-thumbs-up ]"></span>
+                                        </button>
                                         <!-- <div class="input-placeholder">Add a comment...</div> -->
                                     </div>
                                     <div class="panel-google-plus-comment">
@@ -130,6 +134,61 @@
                     var nl_request_str = $(this).parent().parent().find('.panel-request').find('.nl-request').text();
                     console.log(nl_request_str);
                     window.location.replace(`translate?request_str=${nl_request_str}&ip_address=${ip_address}`);
+                });
+
+                $(".translation").each(function (index, element) {
+                    $.get(`/check_vote`, {id: element.className.substr(element.className.lastIndexOf("_") + 1)}, function (vote_data) {
+                        if (vote_data.includes("up")) {
+                            element.querySelector(".upvote").classList.add("selected_button");
+                        } else if (vote_data.includes("down")) {
+                            element.querySelector(".downvote").classList.add("selected_button");
+                        }
+                    });
+                });
+
+                $(".upvote").click(function() {
+                    {# get translation id #}
+                    const translation_class = $(this).parent().parent().parent().attr("class");
+                    const translation_id = translation_class.substr(translation_class.lastIndexOf("_") + 1);
+
+                    var upvote_button = $(this);
+                    if (upvote_button.hasClass("selected_button")) {
+                        console.log("De-upvote translation with id " + translation_id);
+                        $.get(`/vote`, {id: translation_id, upvoted: "false", downvoted: "false", starred: "false"});
+                        upvote_button.removeClass("selected_button");
+                    } else {
+                        upvote_button.addClass("selected_button");
+                        console.log("Upvote translation with id " + translation_id);
+                        $.get(`/vote`, {id: translation_id, upvoted: "true", downvoted: "false", starred: "false"});
+                    }
+                    var downvote_button = $(this).siblings(".downvote");
+                    if (downvote_button.hasClass("selected_button")) {
+                        downvote_button.removeClass("selected_button");
+                    }
+                });
+
+                $(".downvote").click(function() {
+                    {# get translation id #}
+                    const translation_class = $(this).parent().parent().parent().attr("class");
+                    const translation_id = translation_class.substr(translation_class.lastIndexOf("_") + 1);
+                    {% comment %}
+                    check if the button is already clicked
+                    if already clicked, delete the vote in db
+                    {% endcomment %}
+                    var downvote_button = $(this);
+                    if (downvote_button.hasClass("selected_button")) {
+                        console.log("De-downvote translation with id " + translation_id);
+                        $.get(`/vote`, {id: translation_id, upvoted: "false", downvoted: "false", starred: "false"});
+                        downvote_button.removeClass("selected_button");
+                    } else {
+                        downvote_button.addClass("selected_button");
+                        console.log("Downvote translation with id " + translation_id);
+                        $.get(`/vote`, {id: translation_id, upvoted: "false", downvoted: "true", starred: "false"});
+                    }
+                    var upvote_button = $(this).siblings(".upvote");
+                    if (upvote_button.hasClass("selected_button")) {
+                        upvote_button.removeClass("selected_button");
+                    }
                 });
             });
         </script>
