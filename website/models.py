@@ -144,4 +144,4 @@ class Vote(models.Model):
     upvoted = models.BooleanField(default=False)
     downvoted = models.BooleanField(default=False)
     starred = models.BooleanField(default=False)
-    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
