@@ -141,6 +141,64 @@ def translate(request, ip_address):
     }
     return HttpResponse(template.render(context, request))
 
+# @ip_address_required
+# def vote(request, ip_address):
+#     id = request.GET['id']
+#     upvoted = request.GET['upvoted']
+#     downvoted = request.GET['downvoted']
+#     starred = request.GET['starred']
+#
+#     translation = Translation.objects.get(id=id)
+#
+#     vote_query = Vote.objects.filter(translation=translation, ip_address=ip_address)
+#     # store voting record in the DB
+#     if upvoted == 'true' or downvoted == 'true' or starred == 'true':
+#         if vote_query.exists():
+#             vote = Vote.objects.get(translation=translation, ip_address=ip_address)
+#             if upvoted == 'true' and not vote.upvoted:
+#                 translation.num_upvotes += 1
+#             if downvoted == 'true' and not vote.downvoted:
+#                 translation.num_downvotes += 1
+#             if starred == 'true' and not vote.starred:
+#                 translation.num_stars += 1
+#             if upvoted == 'false' and vote.upvoted:
+#                 translation.num_upvotes -= 1
+#             if downvoted == 'false' and vote.downvoted:
+#                 translation.num_downvotes -= 1
+#             if starred == 'false' and vote.starred:
+#                 translation.num_stars -= 1
+#             vote.upvoted = (upvoted == 'true')
+#             vote.downvoted = (downvoted == 'true')
+#             vote.starred = (starred == 'true')
+#             vote.save()
+#         else:
+#             Vote.objects.create(
+#                 translation=translation, ip_address=ip_address,
+#                 upvoted=(upvoted == 'true'),
+#                 downvoted=(downvoted == 'true'),
+#                 starred=(starred == 'true')
+#             )
+#             if upvoted == 'true':
+#                 translation.num_upvotes += 1
+#             if downvoted == 'true':
+#                 translation.num_downvotes += 1
+#             if starred == 'true':
+#                 translation.num_stars += 1
+#     else:
+#         if vote_query.exists():
+#             vote = Vote.objects.get(translation=translation, ip_address=ip_address)
+#             if vote.upvoted == 'true':
+#                 translation.num_upvotes -= 1
+#             if vote.downvoted == 'true':
+#                 translation.num_downvotes -= 1
+#             if vote.starred == 'true':
+#                 translation.num_stars -= 1
+#             vote.delete();
+#
+#     translation.save()
+#
+#     return HttpResponse()
+
 @ip_address_required
 def vote(request, ip_address):
     id = request.GET['id']
@@ -148,54 +206,28 @@ def vote(request, ip_address):
     downvoted = request.GET['downvoted']
     starred = request.GET['starred']
 
-    translation = Translation.objects.get(id=id)
+    userRequest = NLRequest.objects.get(id=id)
 
-    vote_query = Vote.objects.filter(translation=translation, ip_address=ip_address)
+    vote_query = Vote.objects.filter(request=userRequest, ip_address=ip_address)
     # store voting record in the DB
     if upvoted == 'true' or downvoted == 'true' or starred == 'true':
         if vote_query.exists():
-            vote = Vote.objects.get(translation=translation, ip_address=ip_address)
-            if upvoted == 'true' and not vote.upvoted:
-                translation.num_upvotes += 1
-            if downvoted == 'true' and not vote.downvoted:
-                translation.num_downvotes += 1
-            if starred == 'true' and not vote.starred:
-                translation.num_stars += 1
-            if upvoted == 'false' and vote.upvoted:
-                translation.num_upvotes -= 1
-            if downvoted == 'false' and vote.downvoted:
-                translation.num_downvotes -= 1
-            if starred == 'false' and vote.starred:
-                translation.num_stars -= 1
+            vote = Vote.objects.get(request=userRequest, ip_address=ip_address)
             vote.upvoted = (upvoted == 'true')
             vote.downvoted = (downvoted == 'true')
             vote.starred = (starred == 'true')
             vote.save()
         else:
             Vote.objects.create(
-                translation=translation, ip_address=ip_address,
+                request=userRequest, ip_address=ip_address,
                 upvoted=(upvoted == 'true'),
                 downvoted=(downvoted == 'true'),
                 starred=(starred == 'true')
             )
-            if upvoted == 'true':
-                translation.num_upvotes += 1
-            if downvoted == 'true':
-                translation.num_downvotes += 1
-            if starred == 'true':
-                translation.num_stars += 1
     else:
         if vote_query.exists():
-            vote = Vote.objects.get(translation=translation, ip_address=ip_address)
-            if vote.upvoted == 'true':
-                translation.num_upvotes -= 1
-            if vote.downvoted == 'true':
-                translation.num_downvotes -= 1
-            if vote.starred == 'true':
-                translation.num_stars -= 1
+            vote = Vote.objects.get(request=userRequest, ip_address=ip_address)
             vote.delete();
-
-    translation.save()
 
     return HttpResponse()
 
@@ -203,12 +235,12 @@ def vote(request, ip_address):
 def check_vote(request, ip_address):
     id = request.GET['id']
 
-    translation = Translation.objects.get(id=id)
+    userRequest = NLRequest.objects.get(id=id)
 
-    vote_query = Vote.objects.filter(translation=translation, ip_address=ip_address)
+    vote_query = Vote.objects.filter(request=userRequest, ip_address=ip_address)
 
     if vote_query.exists():
-        vote = Vote.objects.get(translation=translation, ip_address=ip_address)
+        vote = Vote.objects.get(request=userRequest, ip_address=ip_address)
         if vote.upvoted == True:
             return HttpResponse("up")
         if vote.downvoted == True:
@@ -254,12 +286,10 @@ def latest_requests_with_translations():
             for top_translation in Translation.objects.filter(
                     request_str=request.request_str, score=max_score):
                 break
-            top_translation_id = top_translation.id
             top_translation = top_translation.pred_cmd.str
         else:
             top_translation = 'No translation available.'
-            top_translation_id = 0
-        latest_requests_with_translations.append((request, top_translation_id, top_translation))
+        latest_requests_with_translations.append((request, request.id, top_translation))
         max_num_translation += 1
         if max_num_translation % 20 == 0:
             break
@@ -270,4 +300,3 @@ def info(request):
     template = loader.get_template('translator/info.html')
     context = {}
     return HttpResponse(template.render(context, request))
-

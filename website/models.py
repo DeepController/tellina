@@ -139,7 +139,8 @@ class Vote(models.Model):
     Each record stores the voting actions to a translation results issued by a
     specific IP address.
     """
-    translation = models.ForeignKey(Translation, on_delete=models.CASCADE)
+    request = models.ForeignKey(NLRequest, null=True, on_delete=models.CASCADE)
+    translation = models.ForeignKey(Translation, null=True, on_delete=models.CASCADE)
     ip_address = models.TextField(default='')
     upvoted = models.BooleanField(default=False)
     downvoted = models.BooleanField(default=False)

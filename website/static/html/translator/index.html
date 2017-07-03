@@ -39,7 +39,7 @@
                 {% if latest_request_list %}
                     <div class="recent-post-panel col-sm-6 col-xs-12">
                         {% for request, id, top_ranked_cmd in latest_request_list %}
-                            <div class="row translation id_{{id}}">
+                            <div class="row NLRequest_id_{{id}}">
                                 <div class="[ panel panel-default ] panel-google-plus">
                                     <!-- <div class="dropdown">
                                         <span class="dropdown-toggle" type="button" data-toggle="dropdown">
@@ -136,8 +136,8 @@
                     window.location.replace(`translate?request_str=${nl_request_str}&ip_address=${ip_address}`);
                 });
 
-                $(".translation").each(function (index, element) {
-                    $.get(`/check_vote`, {id: element.className.substr(element.className.lastIndexOf("_") + 1)}, function (vote_data) {
+                $("[class*='NLRequest_id']").each(function (index, element) {
+                    $.get(`/check_vote`, {id: element.className.match(/NLRequest_id_(\d+)/)[1]}, function (vote_data) {
                         if (vote_data.includes("up")) {
                             element.querySelector(".upvote").classList.add("selected_button");
                         } else if (vote_data.includes("down")) {
@@ -147,19 +147,18 @@
                 });
 
                 $(".upvote").click(function() {
-                    {# get translation id #}
-                    const translation_class = $(this).parent().parent().parent().attr("class");
-                    const translation_id = translation_class.substr(translation_class.lastIndexOf("_") + 1);
+                    {# get NLRequest id #}
+                    const NLRequest_id = $(this).parent().parent().parent().attr("class").match(/NLRequest_id_(\d+)/)[1];
 
                     var upvote_button = $(this);
                     if (upvote_button.hasClass("selected_button")) {
-                        console.log("De-upvote translation with id " + translation_id);
-                        $.get(`/vote`, {id: translation_id, upvoted: "false", downvoted: "false", starred: "false"});
+                        console.log("De-upvote NLRequest with id " + NLRequest_id);
+                        $.get(`/vote`, {id: NLRequest_id, upvoted: "false", downvoted: "false", starred: "false"});
                         upvote_button.removeClass("selected_button");
                     } else {
                         upvote_button.addClass("selected_button");
-                        console.log("Upvote translation with id " + translation_id);
-                        $.get(`/vote`, {id: translation_id, upvoted: "true", downvoted: "false", starred: "false"});
+                        console.log("Upvote NLRequest with id " + NLRequest_id);
+                        $.get(`/vote`, {id: NLRequest_id, upvoted: "true", downvoted: "false", starred: "false"});
                     }
                     var downvote_button = $(this).siblings(".downvote");
                     if (downvote_button.hasClass("selected_button")) {
@@ -169,21 +168,20 @@
 
                 $(".downvote").click(function() {
                     {# get translation id #}
-                    const translation_class = $(this).parent().parent().parent().attr("class");
-                    const translation_id = translation_class.substr(translation_class.lastIndexOf("_") + 1);
+                    const NLRequest_id = $(this).parent().parent().parent().attr("class").match(/NLRequest_id_(\d+)/)[1];
                     {% comment %}
                     check if the button is already clicked
                     if already clicked, delete the vote in db
                     {% endcomment %}
                     var downvote_button = $(this);
                     if (downvote_button.hasClass("selected_button")) {
-                        console.log("De-downvote translation with id " + translation_id);
-                        $.get(`/vote`, {id: translation_id, upvoted: "false", downvoted: "false", starred: "false"});
+                        console.log("De-downvote NLRequest with id " + NLRequest_id);
+                        $.get(`/vote`, {id: NLRequest_id, upvoted: "false", downvoted: "false", starred: "false"});
                         downvote_button.removeClass("selected_button");
                     } else {
                         downvote_button.addClass("selected_button");
-                        console.log("Downvote translation with id " + translation_id);
-                        $.get(`/vote`, {id: translation_id, upvoted: "false", downvoted: "true", starred: "false"});
+                        console.log("Downvote NLRequest with id " + NLRequest_id);
+                        $.get(`/vote`, {id: NLRequest_id, upvoted: "false", downvoted: "true", starred: "false"});
                     }
                     var upvote_button = $(this).siblings(".upvote");
                     if (upvote_button.hasClass("selected_button")) {
