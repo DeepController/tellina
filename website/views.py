@@ -219,7 +219,8 @@ def vote(request, ip_address):
             vote.save()
         else:
             Vote.objects.create(
-                request=userRequest, ip_address=ip_address,
+                request=userRequest,
+                ip_address=ip_address,
                 upvoted=(upvoted == 'true'),
                 downvoted=(downvoted == 'true'),
                 starred=(starred == 'true')

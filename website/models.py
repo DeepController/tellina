@@ -146,3 +146,16 @@ class Vote(models.Model):
     downvoted = models.BooleanField(default=False)
     starred = models.BooleanField(default=False)
     # user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+
+
+class Comment(models.Model):
+    """
+    Each record stores users' comments to an NLRequest or Translation result issued by
+    specific User.
+    """
+    idtranslation = models.ForeignKey(Translation, null=True, on_delete=models.CASCADE)
+    idRepliedTo = models.ForeignKey('self', null=True)
+    idUser = models.ForeignKey(User, on_delete=models.CASCADE)
+    ip_address = models.TextField(default='')
+    content = models.TextField(default='')
+    submission_time = models.DateTimeField(default=timezone.now)

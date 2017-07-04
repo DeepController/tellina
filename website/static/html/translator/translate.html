@@ -16,7 +16,7 @@
                 <div class="well offset1 span10">
                     <table class="cmd-result">
                         <tr>
-                            <td style="width: 30px">
+                            <td class="vote-actions" style="width: 30px;">
                                 <div style="vertical-align: top;" id="pred-cmd-vote-{{forloop.counter}}" data-id="{{translation.id}}"
                                      class="upvote upvote-serverfault">
                                     <a class="upvote">{{upvoted}}</a>
@@ -45,6 +45,35 @@
                                 </button>
                             </td>
                         </tr>
+                    </table>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="width: 60px;"></td>
+                                <td>
+                                    <div class="comments">
+                                        <table>
+                                        <tr>
+                                            <td class="comment-actions">
+                                                <a class="comment-upvote"></a>
+                                                <span class="comment-count">0</span>
+                                            </td>
+                                            <td class="comment-text">
+                                                <div class="comment-body">
+                                                    <span class="comment-copy">
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sodales iaculis ex, a suscipit massa. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Phasellus ut.
+                                                    </span>
+                                                     -
+                                                    <span class="comment-user" style="color: #07C;">123.456.789.012</span>
+                                                    <span class="comment-time">Jul 17'17 at 7:12</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             {% endfor %}
