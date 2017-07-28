@@ -32,6 +32,7 @@ class User(models.Model):
     ip_address = models.TextField(default='')
     first_name = models.TextField(default='anonymous')
     last_name = models.TextField(default='anonymous')
+    nickname = models.TextField(default='anonymous')
     organization = models.TextField(default='--')
     city = models.TextField(default='--')
     region = models.TextField(default='--')

@@ -115,11 +115,14 @@
                 console.log(window.location.hash);
                 // get user's ip address as a global variable
                 var ip_address = '';
-                $.get("http://ipinfo.io", function(response) {
+                {% comment %}$.get("http://ipinfo.io", function(response) {
                     ip_address = response.ip;
                     $.get(`/remember_ip_address`, {ip_address: ip_address});
                     console.log('IP Address for study session logged: ' + ip_address);
-                }, "jsonp");
+                }, "jsonp");{% endcomment %}
+
+                {# temp #}
+                $.get(`/remember_ip_address`, {ip_address: "205.175.97.181"});
 
                 $(".nl-request-input").focus();
 
