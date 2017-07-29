@@ -252,6 +252,13 @@ def check_vote(request, ip_address):
     else:
         return HttpResponse("false")
 
+@ip_address_required
+def leave_comment(request, ip_address):
+    translation_id = request.POST['translation_id']
+    user_id = request.POST['user_id']
+    content = request.POST['content']
+
+
 
 def remember_ip_address(request):
     ip_address = request.GET['ip_address']
