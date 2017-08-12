@@ -1,4 +1,5 @@
 {% extends "translator/base.html" %}
+{% load tellina_extra_tags %}
 {% block head %}
     <link rel="stylesheet" href="/static/lib/hljs.themes/tomorrow.css">
     <link rel='stylesheet' href='/static/css/perfect-scrollbar.css'>
@@ -46,42 +47,45 @@
                             </td>
                         </tr>
                     </table>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td style="width: 60px;"></td>
-                                <td>
-                                    <div class="comments">
-                                        <table>
-                                        <tr>
-                                            <td class="comment-actions">
-                                                <a class="comment-upvote"></a>
-                                                <span class="comment-count">0</span>
-                                            </td>
-                                            <td class="comment-text">
-                                                <div class="comment-body">
-                                                    <span class="comment-copy">
-                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sodales iaculis ex, a suscipit massa. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Phasellus ut.
-                                                    </span>
-                                                     -
-                                                    <span class="comment-user" style="color: #07C;">123.456.789.012</span>
-                                                    <span class="comment-time" style="color: #9199a1;">Jul 17'17 at 7:12</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        </table>
-                                    </div>
-                                    <div class="add-comment">
-                                        <a class="add-comment" style="color: #9199a1;" >add a comment</a>
-                                    </div>
-                                    <div class="edit-comment">
-                                        <textarea class="comment-input" name="post-text" cols="85" rows="15" tabindex="101" maxlength="300" style="height: 136px;"></textarea>
-                                        <button type="submit">Submit</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    {% if comment_list and translation.id in comment_list %}
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td style="width: 60px;"></td>
+                                    <td>
+                                        <div class="comments">
+                                            <table>
+                                                {% for comment in comment_list|get_value:translation.id %}
+                                                    <tr class="comment-{{ translation.id }}" id="comment-id-{{ comment.id }}">
+                                                        <td class="comment-actions">
+                                                            <a class="comment-upvote"></a>
+                                                            <span class="comment-count">0</span>
+                                                        </td>
+                                                        <td class="comment-text">
+                                                            <div class="comment-body">
+                                                                <span class="comment-copy">
+                                                                    {{ comment.content }}
+                                                                </span>
+                                                                <span class="comment-user-{{ comment.idUser.id }}" style="color: #07C;">{{ comment.idUser.nickname }}</span>
+                                                                <span class="comment-time" style="color: #9199a1;">{{ comment.submission_time }}</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                        <div class="add-comment">
+                                            <a class="add-comment" style="color: #9199a1;" >add a comment</a>
+                                        </div>
+                                        <div class="edit-comment">
+                                            <textarea class="comment-input" name="post-text" cols="85" rows="15" tabindex="101" maxlength="300" style="height: 136px;"></textarea>
+                                            <button type="submit">Submit</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    {% endif %}
                 </div>
             {% endfor %}
             {% else %}

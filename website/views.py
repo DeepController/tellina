@@ -13,7 +13,7 @@ sys.path.append(os.path.join(
 
 from bashlint import data_tools
 
-from website.models import NL, Command, NLRequest, Translation, Vote, User
+from website.models import NL, Command, NLRequest, Translation, Vote, User, Comment
 
 WEBSITE_DEVELOP = False
 CACHE_TRANSLATIONS = False
@@ -138,9 +138,13 @@ def translate(request, ip_address):
     # sort translation_list based on voting results
     translation_list.sort(
         key=lambda x: x[0].num_votes + x[0].score, reverse=True)
+    # get comment of each translation
+    trans_id_list = [trans_object[0].id for trans_object in translation_list]
+    comment_list = get_comment(trans_id_list)
     context = {
         'nl_request': nl_request,
-        'trans_list': translation_list
+        'trans_list': translation_list,
+        'comment_list': comment_list
     }
     return HttpResponse(template.render(context, request))
 
