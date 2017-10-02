@@ -88,6 +88,10 @@ html, body {
     color: rgb(108, 108, 108);
 }
 
+
 .selected_button {
     color: red;
+
+.fadeInUp {
+    -webkit-animation-duration: 1s;
 }
