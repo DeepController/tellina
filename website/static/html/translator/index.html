@@ -38,7 +38,6 @@
         <div class="body-panel">
             <div class="row">
                 <div class="col-sm-5 col-xs-12">
-                    <div style="max-width: 540px; float: right">
                     <div class="well instruction-panel ">
                         <h1>Commanding your terminal with natural language</h1>
 
@@ -55,8 +54,8 @@
                                     <li>instead of "some files", use "pdf files";</li>
                                     <li>instead of "sometime ago", use "5 days ago".</li>
                                 </ul>
-                            <li>Put names, strings and regular expressions in quotes <code>""</code> often improves the translation.</li>
-                            <li>Add <code>/</code> to the end of a directory name so that Tellina interprets it as a folder.</li>
+                            <li>Quoting <code>""</code> names, strings and regular expressions often improves the translation.</li>
+                            <li>Put <code>/</code> at the end of a directory name such that Tellina interprets it as a folder.</li>
                         </ul>
                     </div>
                     <div class="small-push"></div>
@@ -64,13 +63,15 @@
                         <div class="footer"><small>&copy; Tellina Tools 2017. This website is under active construction. <a href="mailto:xilin@cs.washington.edu?Subject=Tellina%20Website" target="_top">Email us</a> if you have any suggestion.</small></div>
                     </footer>
                 </div>
+<<<<<<< HEAD
                 {% if latest_request_list %}
                     <div class="recent-post-panel col-sm-6 col-xs-12">
                         {% for request, id, top_ranked_cmd in latest_request_list %}
                             <div class="row NLRequest_id_{{id}}">
                 </div>
+=======
+>>>>>>> 3616d7a90f7f3d0dd946cd9cbae6bb2b1ccbdf71
                 <div class="example-panel col-sm-6 col-xs-12 animated fadeInUp" style="display: None">
-                    <div style="max-width: 800px;">
                     {% for nl, top_ranked_cmd in example_request_list %}
                         <div class="row">
                             <div class="[ panel panel-default ] panel-google-plus">
@@ -126,10 +127,8 @@
                             </div>
                         </div>
                     {% endfor %}
-                    </div>
                 </div>
                 <div class="recent-post-panel col-sm-6 col-xs-12">
-                    <div style="max-width: 800px;">
                     {% if latest_request_list %}
                         {% for request, top_ranked_cmd in latest_request_list %}
                             <div class="row">
@@ -194,7 +193,6 @@
                             </div>
                         {% endfor %}
                     {% endif %}
-                    </div>
                 </div>
             </div>
         </div>
