@@ -67,6 +67,8 @@
                     <div class="recent-post-panel col-sm-6 col-xs-12">
                         {% for request, id, top_ranked_cmd in latest_request_list %}
                             <div class="row NLRequest_id_{{id}}">
+                        {% endfor %}
+                {% endif %}
                 </div>
                 <div class="example-panel col-sm-6 col-xs-12 animated fadeInUp" style="display: None">
                     {% for nl, top_ranked_cmd in example_request_list %}
