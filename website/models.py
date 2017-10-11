@@ -221,7 +221,7 @@ class Vote(models.Model):
     # user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
 
 
-class Comment(models.Model):
+class UserComment(models.Model):
     """
     Each record stores users' comments to an NLRequest or Translation result issued by
     specific User.

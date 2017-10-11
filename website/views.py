@@ -40,11 +40,6 @@ def ip_address_required(f):
 
     return g
 
-###
-if not WEBSITE_DEVELOP:
-    from website.helper_interface import translate_fun
-
-
 @csrf_protect
 @ip_address_required
 def translate(request, ip_address):
@@ -296,7 +291,7 @@ def leave_comment(request, ip_address):
 def get_comment(translation_ids):
     comments = {}
     for translation_id in translation_ids:
-        comment_list = Comment.objects.filter(idtranslation=translation_id)
+        comment_list = UserComment.objects.filter(idtranslation=translation_id)
         if comment_list.exists():
             comments[translation_id] = comment_list
     return comments
