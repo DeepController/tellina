@@ -14,9 +14,8 @@ sys.path.append(os.path.join(
 
 from bashlint import data_tools
 
-#from website.models import NL, Command, NLRequest, Translation, Vote, User, Comment
 
-WEBSITE_DEVELOP = False
+WEBSITE_DEVELOP = True
 CACHE_TRANSLATIONS = False
 
 from website.models import NL, Command, NLRequest, URL, Translation, Vote, User
