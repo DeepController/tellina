@@ -92,6 +92,7 @@ html, body {
 
 .selected_button {
     color: red;
+}
 
 .fadeInUp {
     -webkit-animation-duration: 1s;
